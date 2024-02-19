@@ -13,12 +13,12 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = { "/articles", "/articles.jsp", "/users", "/users.jsp" }, filterName = "AuthFilter")
-public class AuthFilter extends HttpFilter {
+@WebFilter(urlPatterns = { "/users", "/users.jsp" }, filterName = "RoleFilter")
+public class RoleFilter extends HttpFilter {
 
 	private static final long serialVersionUID = 1L;
 
-	public AuthFilter() {
+	public RoleFilter() {
 		super();
 	}
 
@@ -28,16 +28,12 @@ public class AuthFilter extends HttpFilter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		HttpSession session = httpRequest.getSession(false);
-
-		// Check if the user is logged in
-		if (session == null || session.getAttribute("email") == null || session.getAttribute("id") == null) {
-			// Not logged in, redirect to the login page
-			httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.jsp");
-		} else {
-			// Logged in, continue with the filter chain
-			request.setAttribute("id", session.getAttribute("id"));
-			chain.doFilter(request, response);
-		}
+        if(session.getAttribute("role").equals("admin")) {
+            chain.doFilter(request, response);
+        } else {
+            httpResponse.sendError(403);
+        }
+        
 	}
 
 	@Override

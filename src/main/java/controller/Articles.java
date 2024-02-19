@@ -1,7 +1,8 @@
-package servlets;
+package controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,15 +11,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Posts extends HttpServlet {
+@WebServlet("/articles")
+public class Articles extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private Connection connection;
 	private static final String insertQuery = "INSERT INTO posts(user_id, post) VALUES (?, ?)";
 
-    public Posts() {
+    public Articles() {
         super();
-      
     }
     
     @Override
@@ -27,11 +28,13 @@ public class Posts extends HttpServlet {
 		connection = (Connection) getServletContext().getAttribute("DB_CONNECTION");
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		RequestDispatcher dispatcher = request.getRequestDispatcher("posts.jsp");
 		dispatcher.forward(request, response);
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Integer userId = (Integer)request.getAttribute("id");
 		PreparedStatement preparedStatement;

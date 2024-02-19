@@ -1,5 +1,7 @@
 .settings
 build
+target
+.vscode
 .classpath
 .project
 src/main/webapp/WEB-INF/lib

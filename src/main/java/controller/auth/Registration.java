@@ -1,4 +1,4 @@
-package auth;
+package controller.auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,12 +32,14 @@ public class Registration extends HttpServlet {
 		super.init();
 		connection = (Connection) getServletContext().getAttribute("DB_CONNECTION");
 	}
-
+	
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {

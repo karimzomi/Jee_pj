@@ -35,7 +35,7 @@ ResultSet resultSet = statement
 			}
 			%>
 
-			<form method="POST" action="posts" class="my-4">
+			<form method="POST" action="articles" class="my-4">
 				<div class="form-floating">
 					<textarea name="post" class="form-control"
 						placeholder="Leave your post here" id="floatingTextarea"

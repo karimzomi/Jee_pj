@@ -9,12 +9,14 @@ import javax.sql.DataSource;
 import jakarta.servlet.ServletContextAttributeListener;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 
 /**
  * Application Lifecycle Listener implementation class
  * DatabaseConnectionListener
  *
  */
+@WebListener
 public class DatabaseConnectionListener implements ServletContextListener, ServletContextAttributeListener {
 
 	private Connection connection;
@@ -26,6 +28,7 @@ public class DatabaseConnectionListener implements ServletContextListener, Servl
 	public DatabaseConnectionListener() {
 	}
 
+	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		InitialContext ic;
 		try {
@@ -35,11 +38,11 @@ public class DatabaseConnectionListener implements ServletContextListener, Servl
 			connection = ds.getConnection();
 			sce.getServletContext().setAttribute(DB_CONNECTION, connection);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		Connection connection = (Connection) sce.getServletContext().getAttribute(DB_CONNECTION);
 
