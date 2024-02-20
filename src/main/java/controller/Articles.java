@@ -30,13 +30,13 @@ public class Articles extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("posts.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("articles.jsp");
 		dispatcher.forward(request, response);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Integer userId = (Integer)request.getAttribute("id");
+		Integer userId = Integer.valueOf((String) request.getAttribute("id"));
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(insertQuery);
