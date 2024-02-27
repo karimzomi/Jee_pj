@@ -5,10 +5,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.UserBean;
+import models.DAO.UserDAO;
+
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 /**
  * Servlet implementation class Registration
@@ -16,9 +16,7 @@ import java.sql.SQLException;
 @WebServlet(urlPatterns = "/registration")
 public class Registration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection;
-
-	private static final String registerQuery = "INSERT INTO users(username, password, email) VALUES (?, ?, ?)";
+	private UserDAO userDAO;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -30,9 +28,9 @@ public class Registration extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		connection = (Connection) getServletContext().getAttribute("DB_CONNECTION");
+		userDAO = new UserDAO(getServletContext());
 	}
-	
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -42,17 +40,12 @@ public class Registration extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(registerQuery);
-			preparedStatement.setString(1, request.getParameter("username"));
-			preparedStatement.setString(2, request.getParameter("password"));
-			preparedStatement.setString(3, request.getParameter("email"));
+		UserBean user = new UserBean();
+		user.setUsername(request.getParameter("username"));
+		user.setEmail(request.getParameter("email"));
+		user.setPassword(request.getParameter("password"));
 
-			preparedStatement.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		userDAO.saveUser(user);
 		doGet(request, response);
 	}
 

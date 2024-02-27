@@ -8,14 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import models.UserBean;
-import models.mappers.UserMapper;
+import models.DAO.UserDAO;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  * Servlet implementation class Authentication
@@ -23,8 +18,7 @@ import java.util.ArrayList;
 @WebServlet(urlPatterns = "/login")
 public class Authentication extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection;
-	private static final String query = "SELECT * FROM USERS WHERE email = ? and password = ?";
+	private UserDAO userDAO;
 
 	public Authentication() {
 		super();
@@ -33,7 +27,7 @@ public class Authentication extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		connection = (Connection) getServletContext().getAttribute("DB_CONNECTION");
+		userDAO = new UserDAO(getServletContext());
 	}
 
 	@Override
@@ -49,7 +43,7 @@ public class Authentication extends HttpServlet {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
-		UserBean result = validateUser(email, password);
+		UserBean result = userDAO.validateUser(email, password);
 		boolean isValidUser = result != null;
 		if (isValidUser) {
 			// Create a new session for the user
@@ -65,27 +59,6 @@ public class Authentication extends HttpServlet {
 			dispatcher.forward(request, response);
 		}
 
-	}
-
-	private UserBean validateUser(String email, String password) {
-		try {
-			PreparedStatement preparedStatement;
-			preparedStatement = connection.prepareStatement(query);
-			preparedStatement.setString(1, email);
-			preparedStatement.setString(2, password);
-
-			ResultSet resultSet = preparedStatement.executeQuery();
-			ArrayList<UserBean> users = UserMapper.mapUsers(resultSet);
-			preparedStatement.close();
-			resultSet.close();
-			if(users.size() == 0) {
-				return null;
-			}
-			return users.get(0);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 }
