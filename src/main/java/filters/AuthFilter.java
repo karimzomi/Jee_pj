@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import models.UserBean;
 
 import java.io.IOException;
 
@@ -28,14 +29,12 @@ public class AuthFilter extends HttpFilter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		HttpSession session = httpRequest.getSession(false);
-
 		// Check if the user is logged in
-		if (session == null || session.getAttribute("email") == null || session.getAttribute("id") == null) {
+		if (session == null || session.getAttribute("user") == null) {
 			// Not logged in, redirect to the login page
 			httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.jsp");
 		} else {
 			// Logged in, continue with the filter chain
-			request.setAttribute("id", session.getAttribute("id"));
 			chain.doFilter(request, response);
 		}
 	}

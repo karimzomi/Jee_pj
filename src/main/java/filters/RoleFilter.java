@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import models.UserBean;
 
 import java.io.IOException;
 
@@ -28,7 +29,8 @@ public class RoleFilter extends HttpFilter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		HttpSession session = httpRequest.getSession(false);
-        if(session.getAttribute("role").equals("admin")) {
+		UserBean user = (UserBean) session.getAttribute("user");
+        if(user.getRole().equals("admin")) {
             chain.doFilter(request, response);
         } else {
             httpResponse.sendError(403);

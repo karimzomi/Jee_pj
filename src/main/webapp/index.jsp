@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,29 +23,25 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<%
-					if (request.getSession().getAttribute("id") != null) {
-					%>
-					<li class="nav-item"><a class="nav-link active"
-						aria-current="page" href="articles">Articles</a></li>
-					<%
-						if (request.getSession().getAttribute("role").equals("admin")) {
-						%>
-							<li class="nav-item"><a class="nav-link" href="users">Users</a></li>
-						<%
-						}
-						%>
-					<%
-					} else {
-					%>
-					<li class="nav-item"><a class="nav-link active"
-						aria-current="page" href="login">Login</a></li>
-					<li class="nav-item"><a class="nav-link" href="signup.html">Sign
-							up</a></li>
-					<%
-					}
-					%>
-
+					<jsp:useBean id="user" class="models.UserBean" scope="session" />
+					<c:choose>
+						<c:when test="${user.email == null}">
+							<li class="nav-item"><a class="nav-link active"
+								aria-current="page" href="login">Login</a></li>
+							<li class="nav-item"><a class="nav-link" href="signup.html">Sign
+									up</a></li>
+						</c:when>
+						<c:otherwise>
+						<li class="nav-item"><a class="nav-link active"
+								aria-current="page" href="#">Username: <jsp:getProperty name="user" property="username" /></a></li>
+							</a></li>
+							<li class="nav-item"><a class="nav-link active"
+								aria-current="page" href="articles">Articles</a></li>
+							<c:if test="${user.role == 'admin'}">
+								<li class="nav-item"><a class="nav-link" href="users">Users</a></li>
+							</c:if>
+						</c:otherwise>
+					</c:choose>
 				</ul>
 			</div>
 		</div>

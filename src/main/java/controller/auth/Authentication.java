@@ -7,13 +7,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import models.UserBean;
+import models.mappers.UserMapper;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Servlet implementation class Authentication
@@ -47,16 +49,13 @@ public class Authentication extends HttpServlet {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
-		HashMap<String, String> result = validateUser(email, password);
-		boolean isValidUser = result.get("id") != null;
+		UserBean result = validateUser(email, password);
+		boolean isValidUser = result != null;
 		if (isValidUser) {
 			// Create a new session for the user
 			HttpSession session = request.getSession();
 			// Set the user's information in the session
-			session.setAttribute("email", email);
-			session.setAttribute("id", result.get("id"));
-			session.setAttribute("role", result.get("role"));
-
+			session.setAttribute("user", result);
 			// Redirect to a articles page after login
 			response.sendRedirect("index.jsp");
 		} else {
@@ -68,26 +67,25 @@ public class Authentication extends HttpServlet {
 
 	}
 
-	private HashMap<String, String> validateUser(String email, String password) {
-		HashMap<String, String> result = new HashMap<String, String>();
+	private UserBean validateUser(String email, String password) {
 		try {
 			PreparedStatement preparedStatement;
 			preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setString(1, email);
 			preparedStatement.setString(2, password);
+
 			ResultSet resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				if (resultSet.getString("email").equals(email)) {
-					result.put("id", resultSet.getString("id"));
-					result.put("role", resultSet.getString("role"));
-				}
-			}
+			ArrayList<UserBean> users = UserMapper.mapUsers(resultSet);
 			preparedStatement.close();
 			resultSet.close();
+			if(users.size() == 0) {
+				return null;
+			}
+			return users.get(0);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return null;
 	}
 
 }

@@ -6,6 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.UserBean;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +38,8 @@ public class Articles extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Integer userId = Integer.valueOf((String) request.getAttribute("id"));
+		UserBean user = (UserBean) request.getSession().getAttribute("user");
+		Integer userId = user.getId();
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(insertQuery);
